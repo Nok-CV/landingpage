@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lumi – AI Companion on WhatsApp</title>
+  <meta name="description" content="Lumi is an AI-powered conversational companion designed for everyday chat and emotional support, accessible directly through WhatsApp." />
+
+  <!-- Basic SEO / Operator clarity -->
+  <meta name="robots" content="index,follow" />
+  <meta name="theme-color" content="#0b1020" />
+
+  <style>
+    :root{
+      --bg: #0b1020;
+      --bg2:#0f1a36;
+      --card: rgba(255,255,255,0.06);
+      --border: rgba(255,255,255,0.10);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.70);
+      --muted2: rgba(255,255,255,0.58);
+      --accent: #7dd3fc;
+      --accent2:#a78bfa;
+      --good:#34d399;
+      --warn:#fbbf24;
+
+      --radius: 18px;
+      --shadow: 0 20px 60px rgba(0,0,0,0.35);
+      --max: 1040px;
+    }
+
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    body{
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(1200px 700px at 20% 0%, rgba(167,139,250,0.22), transparent 60%),
+                  radial-gradient(1000px 600px at 90% 10%, rgba(125,211,252,0.22), transparent 55%),
+                  linear-gradient(180deg, var(--bg), var(--bg2));
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a{ color: var(--accent); text-decoration: none; }
+    a:hover{ text-decoration: underline; }
+
+    .wrap{ max-width: var(--max); margin: 0 auto; padding: 0 20px; }
+
+    /* Top bar */
+    .top{
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(10px);
+      background: rgba(11,16,32,0.55);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .top-inner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 14px 0;
+      gap: 12px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      min-width: 220px;
+    }
+    .logo{
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 10px 30px rgba(125,211,252,0.18);
+    }
+    .brand b{ font-size: 0.98rem; letter-spacing: 0.2px; }
+    .brand small{ display:block; color: var(--muted2); font-size: 0.78rem; margin-top: -2px; }
+
+    nav{
+      display:flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    nav a{
+      font-size: 0.92rem;
+      color: var(--muted);
+      padding: 6px 10px;
+      border-radius: 10px;
+    }
+    nav a:hover{
+      color: var(--text);
+      background: rgba(255,255,255,0.06);
+      text-decoration:none;
+    }
+
+    /* Hero */
+    header{
+      padding: 64px 0 28px;
+    }
+    .hero{
+      display:grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+    .hero-card{
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: calc(var(--radius) + 4px);
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+    h1{
+      font-size: clamp(2.1rem, 3vw, 3.0rem);
+      line-height: 1.15;
+      margin-bottom: 14px;
+      letter-spacing: -0.4px;
+    }
+    .sub{
+      font-size: 1.08rem;
+      color: var(--muted);
+      max-width: 62ch;
+      margin-bottom: 18px;
+    }
+
+    .badges{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 18px 0 22px;
+    }
+    .badge{
+      font-size: 0.86rem;
+      color: rgba(255,255,255,0.84);
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.05);
+      padding: 7px 10px;
+      border-radius: 999px;
+    }
+    .badge strong{ color: #ffffff; }
+
+    .cta{
+      display:flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      font-weight: 650;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      text-decoration: none;
+      transition: transform 0.18s ease, background 0.18s ease;
+    }
+    .btn:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,0.10);
+      text-decoration:none;
+    }
+    .btn.primary{
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #0b1020;
+      border: none;
+    }
+    .btn.primary:hover{ background: linear-gradient(135deg, #93e3ff, #c4b5fd); }
+
+    .side{
+      display:flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .panel{
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      padding: 18px;
+    }
+    .panel h3{
+      font-size: 1.03rem;
+      margin-bottom: 8px;
+    }
+    .panel p{
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    .panel ul{
+      margin: 10px 0 0 18px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    .panel li{ margin: 6px 0; }
+
+    /* Sections */
+    section{
+      padding: 22px 0;
+    }
+    .section-card{
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      padding: 22px;
+    }
+    .kicker{
+      display:inline-flex;
+      align-items:center;
+      gap: 10px;
+      font-size: 0.86rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .dot{
+      width: 8px; height: 8px; border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+    }
+    h2{
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      letter-spacing: -0.2px;
+    }
+    .lead{
+      color: var(--muted);
+      font-size: 1.00rem;
+      margin-bottom: 12px;
+      max-width: 90ch;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+    .box{
+      background: rgba(0,0,0,0.16);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 14px;
+    }
+    .box h4{ font-size: 1.02rem; margin-bottom: 6px; }
+    .box ul{ margin-left: 18px; color: var(--muted); }
+    .box li{ margin: 6px 0; }
+
+    .notice{
+      border-left: 4px solid rgba(125,211,252,0.75);
+      background: rgba(125,211,252,0.08);
+      padding: 12px 14px;
+      border-radius: 12px;
+      color: rgba(255,255,255,0.86);
+      margin-top: 14px;
+    }
+    .notice b{ color: #ffffff; }
+
+    .warning{
+      border-left: 4px solid rgba(251,191,36,0.85);
+      background: rgba(251,191,36,0.10);
+      padding: 12px 14px;
+      border-radius: 12px;
+      color: rgba(255,255,255,0.86);
+      margin-top: 14px;
+    }
+
+    /* Footer */
+    footer{
+      padding: 40px 0 50px;
+      color: var(--muted2);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      margin-top: 30px;
+    }
+    .footer-grid{
+      display:grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 18px;
+      align-items:start;
+    }
+    .fine{
+      font-size: 0.9rem;
+      color: var(--muted2);
+      margin-top: 10px;
+    }
+    .mini-links a{ display:inline-block; margin-right: 12px; font-size: 0.92rem; }
+
+    @media (max-width: 880px){
+      .hero{ grid-template-columns: 1fr; }
+      nav{ display:none; } /* keep it simple on mobile; user can scroll */
+      .grid{ grid-template-columns: 1fr; }
+      .footer-grid{ grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Top bar -->
+  <div class="top">
+    <div class="wrap">
+      <div class="top-inner">
+        <div class="brand" aria-label="Brand">
+          <div class="logo" aria-hidden="true"></div>
+          <div>
+            <b>Lumi</b>
+            <small>AI Companion on WhatsApp</small>
+          </div>
+        </div>
+
+        <nav aria-label="Site navigation">
+          <a href="#overview">Overview</a>
+          <a href="#how">How it works</a>
+          <a href="#use">Intended use</a>
+          <a href="#safety">Safety</a>
+          <a href="#privacy">Privacy</a>
+          <a href="#company">Company</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <header>
+    <div class="wrap">
+      <div class="hero">
+        <div class="hero-card">
+          <h1>Lumi – AI Companion on WhatsApp</h1>
+          <p class="sub"><strong>Private, AI-powered conversations on WhatsApp.</strong></p>
+          <p class="sub">
+            Lumi is an AI-powered conversational companion designed for everyday chat and emotional support, accessible directly through WhatsApp.
+          </p>
+
+          <div class="badges" aria-label="Key statements">
+            <span class="badge"><strong>AI system</strong> (not human)</span>
+            <span class="badge">User-initiated only</span>
+            <span class="badge">No medical advice</span>
+            <span class="badge">No therapy / counselling</span>
+          </div>
+
+          <div class="cta">
+            <!-- Replace with your WhatsApp entry point if you have one; otherwise keep as "Contact" -->
+            <a class="btn primary" href="#contact">Contact</a>
+            <a class="btn" href="#overview">Read overview</a>
+          </div>
+
+          <div class="notice" role="note" aria-label="Transparency note">
+            <b>Transparency:</b> Lumi is an AI system. It is not a human, not a medical professional, and not a therapist or counsellor.
+          </div>
+        </div>
+
+        <div class="side">
+          <div class="panel">
+            <h3>Service scope</h3>
+            <p>Lumi is designed for everyday chat and listening-style emotional support through conversation.</p>
+            <ul>
+              <li>Casual conversation</li>
+              <li>Companionship via chat</li>
+              <li>User-controlled participation</li>
+            </ul>
+          </div>
+
+          <div class="panel">
+            <h3>Not for emergencies</h3>
+            <p>If you are in immediate danger or feel unsafe, contact local emergency services.</p>
+            <p class="fine">
+              UK support: Samaritans – Call <strong>116 123</strong> or visit
+              <a href="https://www.samaritans.org" target="_blank" rel="noopener">samaritans.org</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- Section 1 -->
+    <section id="overview" aria-label="Product overview">
+      <div class="section-card">
+        <div class="kicker"><span class="dot"></span>Section 1</div>
+        <h2>Product overview</h2>
+        <p class="lead">
+          Lumi is an AI-powered conversational service that allows users to engage in private, one-to-one conversations on WhatsApp.
+          Users may talk to Lumi about daily life, thoughts, feelings, or simply chat for companionship.
+          All conversations are initiated by the user.
+        </p>
+
+        <div class="grid">
+          <div class="box">
+            <h4>What Lumi is</h4>
+            <ul>
+              <li>An AI system</li>
+              <li>A conversational companion for everyday chat</li>
+              <li>Accessible via WhatsApp</li>
+            </ul>
+          </div>
+
+          <div class="box">
+            <h4>What Lumi is not</h4>
+            <ul>
+              <li>Not a human</li>
+              <li>Not a medical professional</li>
+              <li>Not a therapist or counsellor</li>
+              <li>No medical advice, psychological diagnosis, or treatment</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2 -->
+    <section id="how" aria-label="How the service works">
+      <div class="section-card">
+        <div class="kicker"><span class="dot"></span>Section 2</div>
+        <h2>How the service works</h2>
+        <p class="lead">
+          A user sends a message to Lumi on WhatsApp. The conversation is initiated by the user. Lumi responds using AI-generated messages.
+          The user may stop the conversation at any time. All conversations are private and user-controlled.
+        </p>
+
+        <div class="grid">
+          <div class="box">
+            <h4>Flow</h4>
+            <ul>
+              <li>User sends a message to Lumi on WhatsApp</li>
+              <li>Conversation is initiated by the user</li>
+              <li>Lumi replies with AI-generated messages</li>
+              <li>User can stop at any time</li>
+            </ul>
+          </div>
+
+          <div class="box">
+            <h4>What the service does not do</h4>
+            <ul>
+              <li>Send unsolicited messages</li>
+              <li>Perform cold outreach</li>
+              <li>Send marketing broadcasts</li>
+              <li>Add users to groups</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3 -->
+    <section id="use" aria-label="Intended use and limitations">
+      <div class="section-card">
+        <div class="kicker"><span class="dot"></span>Section 3</div>
+        <h2>Intended use & limitations</h2>
+        <p class="lead">
+          Lumi is intended for casual conversation and listening-style emotional support through conversation, as well as everyday companionship via chat.
+          It is not intended for medical advice, mental health diagnosis, therapy or counselling, or crisis / emergency intervention.
+        </p>
+
+        <div class="grid">
+          <div class="box">
+            <h4>Intended use</h4>
+            <ul>
+              <li>Casual conversation</li>
+              <li>Emotional support through listening and conversation</li>
+              <li>Everyday companionship via chat</li>
+            </ul>
+          </div>
+
+          <div class="box">
+            <h4>Not intended for</h4>
+            <ul>
+              <li>Medical advice</li>
+              <li>Mental health diagnosis</li>
+              <li>Therapy or counselling</li>
+              <li>Crisis or emergency intervention</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="warning" role="note" aria-label="Limitation notice">
+          Lumi should not be used as a substitute for professional help or real-world relationships.
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4 -->
+    <section id="safety" aria-label="Safety and wellbeing">
+      <div class="section-card">
+        <div class="kicker"><span class="dot"></span>Section 4</div>
+        <h2>Safety, wellbeing & responsibility</h2>
+        <p class="lead">
+          Lumi is designed with safety and transparency in mind. Users are informed they are interacting with an AI system.
+          Lumi does not claim to replace professionals or human support. Users remain in full control of participation.
+        </p>
+
+        <div class="grid">
+          <div class="box">
+            <h4>Safety principles</h4>
+            <ul>
+              <li>Clear AI disclosure</li>
+              <li>No claims of professional replacement</li>
+              <li>User-controlled participation</li>
+            </ul>
+          </div>
+
+          <div class="box">
+            <h4>If a user feels distressed</h4>
+            <ul>
+              <li>Users are encouraged to seek professional support</li>
+              <li>In emergencies, contact local emergency services</li>
+              <li>UK: Samaritans – Call <strong>116 123</strong></li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="fine" style="margin-top:10px;">
+          UK support resources: Samaritans – Call 116 123 or visit
+          <a href="https://www.samaritans.org" target="_blank" rel="noopener">samaritans.org</a>.
+          If you are outside the UK, please contact local emergency services or support organisations.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 5 -->
+    <section id="privacy" aria-label="Privacy and data use">
+      <div class="section-card">
+        <div class="kicker"><span class="dot"></span>Section 5</div>
+        <h2>Privacy and data use</h2>
+        <p class="lead">
+          Conversations with Lumi occur on WhatsApp and are processed to provide responses.
+          The service uses conversations only to operate and improve the AI system, does not sell personal data, and does not use conversations for advertising.
+          Users may stop using the service at any time.
+        </p>
+
+        <div class="grid">
+          <div class="box">
+            <h4>Data principles</h4>
+            <ul>
+              <li>Used to operate and improve the AI system</li>
+              <li>Not sold</li>
+              <li>Not used for advertising</li>
+            </ul>
+          </div>
+
+          <div class="box">
+            <h4>User control</h4>
+            <ul>
+              <li>Users initiate conversations</li>
+              <li>Users can stop at any time</li>
+              <li>Optional full privacy policy can be provided separately</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="notice" role="note" aria-label="Privacy policy note">
+          A full privacy policy can be provided separately if required.
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 6 -->
+    <section id="company" aria-label="Company and operator">
+      <div class="section-card">
+        <div class="kicker"><span class="dot"></span>Section 6</div>
+        <h2>Company & operator</h2>
+        <p class="lead">
+          This service is operated by: <strong>[YOUR UK COMPANY LEGAL NAME]</strong>, a company registered in the United Kingdom.
+          The company operates multiple business lines, including logistics and digital services. Lumi is part of the company’s digital and AI-powered conversational services.
+          The WhatsApp-based AI companion service is operated as a standalone digital product.
+        </p>
+
+        <div class="grid">
+          <div class="box">
+            <h4>Operator</h4>
+            <ul>
+              <li><strong>[YOUR UK COMPANY LEGAL NAME]</strong></li>
+              <li>Registered in the United Kingdom</li>
+              <li>Business lines include logistics and digital services</li>
+            </ul>
+          </div>
+
+          <div class="box">
+            <h4>Product positioning</h4>
+            <ul>
+              <li>Lumi is a standalone digital product</li>
+              <li>AI-powered conversational service</li>
+              <li>Delivered via WhatsApp</li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="fine" style="margin-top:10px;">
+          Replace the bracketed company name above with your official registered legal entity name.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 7 -->
+    <section id="contact" aria-label="Contact and accountability">
+      <div class="section-card">
+        <div class="kicker"><span class="dot"></span>Section 7</div>
+        <h2>Contact & accountability</h2>
+        <p class="lead">
+          For questions, support, or business inquiries, contact:
+        </p>
+
+        <div class="grid">
+          <div class="box">
+            <h4>Email</h4>
+            <p style="color:var(--muted);">
+              <a href="mailto:info@yourdomain.com">info@yourdomain.com</a>
+            </p>
+            <p class="fine">Replace with your official support email (recommended: info@).</p>
+          </div>
+
+          <div class="box">
+            <h4>Optional links</h4>
+            <ul>
+              <li><a href="#" onclick="return false;">Privacy Policy</a> (add later if needed)</li>
+              <li><a href="#" onclick="return false;">Terms</a> (add later if needed)</li>
+            </ul>
+            <p class="fine">If you have these pages, replace the placeholder links.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="footer-grid">
+        <div>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="logo" aria-hidden="true" style="width:26px;height:26px;border-radius:9px;"></div>
+            <div>
+              <strong style="color:rgba(255,255,255,0.88);">Lumi</strong>
+              <div class="fine">AI Companion on WhatsApp</div>
+            </div>
+          </div>
+          <div class="fine">
+            © 2025 <strong>[YOUR UK COMPANY LEGAL NAME]</strong>. All rights reserved.
+          </div>
+        </div>
+
+        <div class="mini-links" aria-label="Footer links">
+          <a href="#overview">Overview</a>
+          <a href="#privacy">Privacy</a>
+          <a href="#company">Company</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </div>
+
+      <div class="fine" style="margin-top:14px;">
+        Disclaimer: Lumi is an AI system and does not provide medical advice, diagnosis, treatment, therapy, or counselling.
+        If you feel unsafe or are in crisis, contact local emergency services. UK: Samaritans 116 123.
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
